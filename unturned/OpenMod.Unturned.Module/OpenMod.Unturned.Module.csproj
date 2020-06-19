@@ -6,30 +6,17 @@
   <Import Project="$(MSBuildThisFileDirectory)..\..\props\SharedProjectProps.props" />
 
   <ItemGroup>
-    <PackageReference Include="Lib.Harmony" Version="2.0.1" />
-  </ItemGroup>
-
-  <PropertyGroup Condition="$(Configuration) == 'Debug'">
-    <NuGetBootstrap>false</NuGetBootstrap>
-  </PropertyGroup>
-  <PropertyGroup Condition="$(Configuration) == 'Release'">
-    <NuGetBootstrap>true</NuGetBootstrap>
-  </PropertyGroup>
-
-  <ItemGroup Condition="$(NuGetBootstrap) == 'true'">
     <ProjectReference Include="..\..\framework\OpenMod.Bootstrapper\OpenMod.Bootstrapper.csproj" />
+    <ProjectReference Include="..\OpenMod.Unturned.Module.Shared\OpenMod.Unturned.Module.Shared.csproj" />
   </ItemGroup>
-  <ItemGroup Condition="$(NuGetBootstrap) != 'true'">
-    <ProjectReference  Include="..\OpenMod.Unturned\OpenMod.Unturned.csproj" />
-  </ItemGroup>
-
-  <PropertyGroup Condition="$(NuGetBootstrap) == 'true'">
-    <DefineConstants>NUGET_BOOTSTRAP</DefineConstants>
-  </PropertyGroup>
 
   <ItemGroup>
     <PackageReference Include="Legacy2CPSWorkaround" Version="1.0.0">
       <PrivateAssets>All</PrivateAssets>
+    </PackageReference>
+    <PackageReference Include="Microsoft.NETFramework.ReferenceAssemblies.net461" Version="1.0.0">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
   </ItemGroup>
 
@@ -53,19 +40,38 @@
   <ItemGroup>
     <Reference Include="Assembly-CSharp">
       <HintPath>..\OpenMod.Unturned\libs\Assembly-CSharp.dll</HintPath>
+      <Private>false</Private>
     </Reference>
     <Reference Include="Assembly-CSharp-firstpass">
       <HintPath>..\OpenMod.Unturned\libs\Assembly-CSharp-firstpass.dll</HintPath>
+      <Private>false</Private>
+    </Reference>
+    <Reference Include="UniTask">
+      <HintPath>..\..\unityengine\OpenMod.UnityEngine\libs\UniTask.dll</HintPath>
+      <Private>true</Private>
+    </Reference>
+    <Reference Include="UniTask.Linq">
+      <HintPath>..\..\unityengine\OpenMod.UnityEngine\libs\UniTask.Linq.dll</HintPath>
+      <Private>true</Private>
     </Reference>
     <Reference Include="UnityEngine">
       <HintPath>..\..\unityengine\OpenMod.UnityEngine\libs\UnityEngine.dll</HintPath>
+      <Private>false</Private>
     </Reference>
     <Reference Include="UnityEngine.CoreModule">
       <HintPath>..\..\unityengine\OpenMod.UnityEngine\libs\UnityEngine.CoreModule.dll</HintPath>
+      <Private>false</Private>
     </Reference>
     <Reference Include="UnityEngine.PhysicsModule">
       <HintPath>..\..\unityengine\OpenMod.UnityEngine\libs\UnityEngine.PhysicsModule.dll</HintPath>
+      <Private>false</Private>
     </Reference>
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Update="Readme.txt">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
 
 </Project>

@@ -12,21 +12,27 @@ namespace OpenMod.Core.Helpers
             baseDir ??= string.Empty;
 
             var resourceNames = assembly.GetManifestResourceNames();
+
+            if (resourceNames.Length > 0 && !Directory.Exists(baseDir))
+            {
+                Directory.CreateDirectory(baseDir);
+            }
+
             foreach (var resourceName in resourceNames)
             {
                 var regex = new Regex(Regex.Escape(assembly.GetName().Name + "."));
                 var fileName = regex.Replace(resourceName, string.Empty, 1);
 
                 var filePath = Path.Combine(baseDir, fileName);
+                using var stream = assembly.GetManifestResourceStream(resourceName);
+                using var reader = new StreamReader(stream ?? throw new MissingManifestResourceException($"Couldn't find resource: {resourceName}"));
+                var fileContent = reader.ReadToEnd();
+                
                 if (File.Exists(filePath) && !overwrite)
                 {
                     continue;
                 }
-
-                using var stream = assembly.GetManifestResourceStream(resourceName);
-                using var reader = new StreamReader(stream ?? throw new MissingManifestResourceException($"Couldn't find resource: {resourceName}"));
-
-                var fileContent = reader.ReadToEnd();
+                
                 File.WriteAllText(filePath, fileContent);
             }
         }
