@@ -5,6 +5,7 @@ using Microsoft.Extensions.Localization;
 using Microsoft.Extensions.Logging;
 using OpenMod.API.Ioc;
 using OpenMod.Core.Commands;
+using OpenMod.Core.Console;
 using OpenMod.Core.Localization;
 using OpenMod.Core.Permissions;
 using OpenMod.Core.Users;
@@ -14,11 +15,12 @@ namespace OpenMod.Core
     [UsedImplicitly]
     public class ServiceConfigurator : IServiceConfigurator
     {
-        public Task ConfigureServicesAsync(IOpenModStartupContext openModStartupContext, IServiceCollection serviceCollection)
+        public void ConfigureServices(IOpenModStartupContext openModStartupContext, IServiceCollection serviceCollection)
         {
             serviceCollection.Configure<PermissionCheckerOptions>(options =>
             {
                 options.AddPermissionCheckProvider<DefaultPermissionCheckProvider>();
+                options.AddPermissionCheckProvider<ConsolePermissionProvider>();
                 options.AddPermissionSource<DefaultPermissionStore>();
             });
 
@@ -34,8 +36,6 @@ namespace OpenMod.Core
             });
 
             serviceCollection.AddTransient<IStringLocalizerFactory, ConfigurationBasedStringLocalizerFactory>();
-
-            return Task.CompletedTask;
         }
     }
 }

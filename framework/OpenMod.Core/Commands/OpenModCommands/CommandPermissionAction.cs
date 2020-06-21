@@ -4,20 +4,19 @@ using System.Threading.Tasks;
 using OpenMod.API.Permissions;
 using OpenMod.API.Users;
 using OpenMod.Core.Permissions;
-using OpenMod.Core.Users;
 
 namespace OpenMod.Core.Commands.OpenModCommands
 {
     public abstract class CommandPermissionAction : Command
     {
-        private readonly IPermissionGroupStore m_PermissionGroupStore;
+        private readonly IPermissionRoleStore m_PermissionRoleStore;
         private readonly IUserDataStore m_UserDataStore;
 
         protected CommandPermissionAction(IServiceProvider serviceProvider,
-            IPermissionGroupStore permissionGroupStore,
+            IPermissionRoleStore permissionRoleStore,
             IUserDataStore userDataStore) : base(serviceProvider)
         {
-            m_PermissionGroupStore = permissionGroupStore;
+            m_PermissionRoleStore = permissionRoleStore;
             m_UserDataStore = userDataStore;
         }
 
@@ -31,20 +30,20 @@ namespace OpenMod.Core.Commands.OpenModCommands
             IPermissionActor target;
             string permission;
 
-            string actorType = Context.Parameters[0].ToLower();
-            string targetName = Context.Parameters[1];
-            string permissionToUpdate = Context.Parameters[2];
+            var actorType = Context.Parameters[0].ToLower();
+            var targetName = Context.Parameters[1];
+            var permissionToUpdate = Context.Parameters[2];
 
             switch (actorType)
             {
-                case "g":
-                case "group":
-                    permission = "Manage.Groups." + targetName;
-                    target = await m_PermissionGroupStore.GetGroupAsync(targetName);
+                case "r":
+                case "role":
+                    permission = "Manage.Roles." + targetName;
+                    target = await m_PermissionRoleStore.GetRoleAsync(targetName);
 
                     if (target == null)
                     {
-                        await Context.Actor.PrintMessageAsync($"Group \"{targetName}\" was not found.", Color.Red);
+                        await Context.Actor.PrintMessageAsync($"Role \"{targetName}\" was not found.", Color.Red);
                         return;
                     }
 
@@ -54,7 +53,7 @@ namespace OpenMod.Core.Commands.OpenModCommands
                 case "player":
                     permission = "Manage.Players";
                     var id = await Context.Parameters.GetAsync<string>(1);
-                    var user = await m_UserDataStore.GetUserDataAsync(actorType, id);
+                    var user = await m_UserDataStore.GetUserDataAsync(id, actorType);
 
                     if (user == null)
                     {
@@ -77,6 +76,6 @@ namespace OpenMod.Core.Commands.OpenModCommands
             await ExecuteUpdateAsync(target, permissionToUpdate);
         }
 
-        protected abstract Task ExecuteUpdateAsync(IPermissionActor target, string param);
+        protected abstract Task ExecuteUpdateAsync(IPermissionActor target, string roleId);
     }
 }

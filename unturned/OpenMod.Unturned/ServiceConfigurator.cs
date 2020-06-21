@@ -6,17 +6,18 @@ using OpenMod.Core.Console;
 using OpenMod.Core.Permissions;
 using OpenMod.Core.Users;
 using OpenMod.Unturned.Commands;
+using OpenMod.Unturned.Permissions;
 using OpenMod.Unturned.Users;
 
 namespace OpenMod.Unturned
 {
     public class ServiceConfigurator : IServiceConfigurator
     {
-        public Task ConfigureServicesAsync(IOpenModStartupContext openModStartupContext, IServiceCollection serviceCollection)
+        public void ConfigureServices(IOpenModStartupContext openModStartupContext, IServiceCollection serviceCollection)
         {
             serviceCollection.Configure<PermissionCheckerOptions>(options =>
             {
-                options.AddPermissionCheckProvider<ConsolePermissionProvider>();
+                options.AddPermissionCheckProvider<UnturnedAdminPermissionCheckProvider>();
             });
             
             serviceCollection.Configure<CommandStoreOptions>(options =>
@@ -30,8 +31,6 @@ namespace OpenMod.Unturned
             });
 
             serviceCollection.AddSingleton<UnturnedCommandHandler>();
-
-            return Task.CompletedTask;
         }
     }
 }
